@@ -35,6 +35,7 @@ configure: $(UNZIP_DIR)/configure
 	# run configure
 	@cd $(UNZIP_DIR)  && \
 		./configure --prefix=$(BUILD_PREFIX) \
+		INSTALL="`which install` -c -C" \
 		PKG_CONFIG_PATH=$(PKG_CONFIG_PATH):$(BUILD_PREFIX)/lib/pkgconfig \
 		CFLAGS="-I$(BUILD_PREFIX)/include $(OPT_FLAGS) $(CFLAGS)" \
 		CXXFLAGS="-I$(BUILD_PREFIX)/include $(OPT_FLAGS) $(CXXFLAGS)" \
