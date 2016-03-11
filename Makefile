@@ -13,7 +13,11 @@ CMAKE_CONFIG=--config $(BUILD_TYPE)
 
 .PHONY: all
 all: configure
+ifeq ($(OS),Windows_NT)
 	cmake --build pod-build $(CMAKE_CONFIG) --target install
+else
+	$(MAKE) -C pod-build install
+endif
 
 pod-build:
 	cmake -E make_directory pod-build
@@ -26,9 +30,9 @@ configure: pod-build
 .PHONY: options
 options: configure
 ifeq ($(OS),Windows_NT)
-	cmake-gui pod-build
+	cmake-gui $(CMAKE_FLAGS) pod-build
 else
-	ccmake pod-build
+	ccmake $(CMAKE_FLAGS) pod-build
 endif
 
 .PHONY: clean
@@ -39,7 +43,11 @@ clean:
 
 # other (custom) targets are passed through to the cmake-generated Makefile
 %::
+ifeq ($(OS),Windows_NT)
 	cmake --build pod-build $(CMAKE_CONFIG) --target $@
+else
+	$(MAKE) -C pod-build $@
+endif
 
 # Default to a less-verbose build.  If you want all the gory compiler output,
 # run "make VERBOSE=1"
