@@ -13,33 +13,41 @@ CMAKE_CONFIG=--config $(BUILD_TYPE)
 
 .PHONY: all
 all: configure
-	cmake --build lcm/lcm-src/pod-build $(CMAKE_CONFIG) --target install
+ifeq ($(OS),Windows_NT)
+	cmake --build pod-build $(CMAKE_CONFIG) --target install
+else
+	$(MAKE) -C pod-build install
+endif
 
-lcm/lcm-src/pod-build:
-	cmake -E make_directory lcm/lcm-src/pod-build
+pod-build:
+	cmake -E make_directory pod-build
 
 .PHONY: configure
-configure: lcm/lcm-src/pod-build
+configure: pod-build
 	@echo Configuring with CMAKE_FLAGS: $(CMAKE_FLAGS)
-	@cd lcm/lcm-src/pod-build && cmake $(CMAKE_FLAGS) ..
+	@cd pod-build && cmake $(CMAKE_FLAGS) ..
 
 .PHONY: options
 options: configure
 ifeq ($(OS),Windows_NT)
-	cmake-gui lcm/lcm-src/pod-build
+	cmake-gui $(CMAKE_FLAGS) pod-build
 else
-	ccmake lcm/lcm-src/pod-build
+	ccmake $(CMAKE_FLAGS) pod-build
 endif
 
 .PHONY: clean
 clean:
-	cmake --build lcm/lcm-src/pod-build --target clean
-	cmake -E remove_directory lcm/lcm-src/pod-build
+	cmake --build pod-build --target clean
+	cmake -E remove_directory pod-build
 	cmake -E remove_directory build
 
 # other (custom) targets are passed through to the cmake-generated Makefile
 %::
-	cmake --build lcm/lcm-src/pod-build $(CMAKE_CONFIG) --target $@
+ifeq ($(OS),Windows_NT)
+	cmake --build pod-build $(CMAKE_CONFIG) --target $@
+else
+	$(MAKE) -C pod-build $@
+endif
 
 # Default to a less-verbose build.  If you want all the gory compiler output,
 # run "make VERBOSE=1"

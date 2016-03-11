@@ -1,3 +1,3 @@
-[submodule "lcm/lcm-src/cmake"]
-	path = lcm/lcm-src/cmake
+[submodule "cmake"]
+	path = cmake
 	url = https://github.com/RobotLocomotion/cmake.git

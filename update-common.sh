@@ -24,9 +24,6 @@
 #       The name of the project.
 #   ownership
 #       A git author name/email for the commits.
-#   subtree
-#       The location of the thirdparty package within the main source
-#       tree.
 #   repo
 #       The git repository to use as upstream.
 #   tag
@@ -73,8 +70,6 @@ readonly upstream_old_short="$( git cat-file commit "$basehash" | sed -n '/'"$ba
     die "'name' is empty"
 [ -n "$ownership" ] || \
     die "'ownership' is empty"
-[ -n "$subtree" ] || \
-    die "'subtree' is empty"
 [ -n "$repo" ] || \
     die "'repo' is empty"
 [ -n "$tag" ] || \
@@ -153,11 +148,11 @@ popd
 
 # Merge the subset into this repository
 if [ -n "$basehash" ]; then
-    git merge --log -s recursive "-Xsubtree=$subtree/" --no-commit "upstream-$name"
+    git merge --log -s recursive --no-commit "upstream-$name"
 else
     git fetch "$extractdir" "upstream-$name:upstream-$name"
     git merge --log -s ours --no-commit "upstream-$name"
-    git read-tree -u --prefix="$subtree/" "upstream-$name"
+    git read-tree -u "upstream-$name"
 fi
 git commit --no-edit
 git branch -d "upstream-$name"
